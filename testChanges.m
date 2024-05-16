@@ -42,4 +42,48 @@ xlabel('downwind distance (m)')
 colorbar
 grid(gca,'on')
 
-%% 
+%% Change the inputs slightly and run it
+% 12:38 PM 5/16/24
+
+clear all 
+close all
+
+% make up some input params
+ustar = 1;
+wstar = 0;
+L = .1;
+z_i = 100;
+z0 = 0.03;
+xmin = -10;
+xmax = 1000;
+zmin = 1;
+zmax = 100;
+np = 10000;
+vs = .03;
+x0 = 0;
+h0 = 1;
+nxgrid = 500;
+nzgrid = 100;
+C0 = 3;
+
+
+emin = xmin;
+emax = xmax;
+nmin = 0;
+nmax = 1;
+negrid = nxgrid;
+nngrid = 2;
+e0 = 0;
+
+[e_grid, n_grid, z_grid, c_grid, depgrid] = LS_stableModel(ustar, wstar, L, ...
+    z_i, z0, emin, emax, nmin, nmax, zmin, zmax, np, vs, e0, h0, negrid, nngrid, nzgrid, C0);
+
+% plot it 
+figure
+levels = [0.01,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.8,1,1.1,1.2,1.4,1.6,2]/10000;
+%contourf(squeeze(cgrid))
+contourf(e_grid,z_grid,squeeze(c_grid)',levels)
+ylabel('height (m)')
+xlabel('downwind distance (m)')
+colorbar
+grid(gca,'on')

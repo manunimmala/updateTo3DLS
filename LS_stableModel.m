@@ -1,5 +1,5 @@
-function [xgrid, zgrid, cgrid, depgrid] = LS_stableModel(ustar, wstar, L, ...
-    z_i, z0, xmin, xmax, zmin, zmax, np, vs, x0, h0, nxgrid, nzgrid, C0)
+function [e_grid, n_grid, z_grid, c_grid, depgrid] = LS_stableModel(ustar, wstar, L, ...
+    z_i, z0, emin, emax, nmin, nmax, zmin, zmax, np, vs, e0, h0, negrid, nngrid, nzgrid, C0)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % LS_STABLEMODEL Simulates particle transport and deposition in a
@@ -44,18 +44,18 @@ function [xgrid, zgrid, cgrid, depgrid] = LS_stableModel(ustar, wstar, L, ...
 % times, and concentration
 
 
-emin = xmin;
-emax = xmax;
-nmin = 0;
-nmax = 1;
-negrid = nxgrid;
-nngrid = 2;
+%emin = xmin;
+%emax = xmax;
+%nmin = 0;
+%nmax = 1;
+%negrid = nxgrid;
+%nngrid = 2;
 
-[egrid, ngrid, zgrid, egridConstant, ngridConstant,... 
+[e_grid, n_grid, z_grid, egridConstant, ngridConstant,... 
     zgridConstant, pgrid, depgrid, egridCellSize, ngridCellSize,zgridCellSize]... 
     = LS_makeGrid(emin, emax, nmin, nmax, zmin, zmax, negrid, nngrid, nzgrid);
-xgrid = egrid;
-ygrid = ngrid;
+%xgrid = egrid;
+%ygrid = ngrid;
 %xgridConstant = egridConstant;
 %ygridConstant = ngridConstant;
 %xgridCellSize = egridCellSize;
@@ -69,7 +69,7 @@ for p = 1:np
 
     % Initialize particle position and velocity
     in_domain = 1;
-    e = x0;
+    e = e0;
     z = h0;
     t = 0;
     up = up0(p);
@@ -82,7 +82,7 @@ for p = 1:np
         [e, z, t, dt, up, wp] = LS_stableStep(ustar, L, z_i, z0, C0, vs, e, z, t, up, wp);
         
         % If particle leaves domain, mark it as not in domain.
-        if e < xmin || e > xmax || z > zmax
+        if e < emin || e > emax || z > zmax
             
             % If it leaves the top or sides of domain:
             in_domain = 0;
@@ -99,8 +99,8 @@ for p = 1:np
         
             % Else, increment pgrid by dt for concentration computation
             e_ind = floor(e/egridCellSize - egridConstant);
-            jgrid = floor(z/zgridCellSize - zgridConstant);
-            pgrid(e_ind,1,jgrid) = pgrid(e_ind,1,jgrid)+dt;
+            z_ind = floor(z/zgridCellSize - zgridConstant);
+            pgrid(e_ind,1,z_ind) = pgrid(e_ind,1,z_ind)+dt;
         
         end
 
@@ -108,7 +108,7 @@ for p = 1:np
 end % End of particle release loop
 
 % Compute concentration from pgrid
-cgrid = pgrid/(np*egridCellSize*zgridCellSize);
+c_grid = pgrid/(np*egridCellSize*ngridCellSize*zgridCellSize);
 
 end
 
