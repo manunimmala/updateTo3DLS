@@ -91,16 +91,16 @@ for p = 1:np
             
             % Otherwise if it leaves the bottom of the domain ("deposits"), increment
             % depgrid. Also mark it as not in domain.          
-            igrid = floor(n/ngridCellSize - ngridConstant);
-            depgrid(igrid) = depgrid(igrid) + 1;
+            ngridind = floor(n/ngridCellSize - ngridConstant);
+            depgrid(ngridind) = depgrid(ngridind) + 1;
             in_domain = 0;
             
         else
         
             % Else, increment pgrid by dt for concentration computation
-            igrid = floor(n/ngridCellSize - ngridConstant);
+            ngridind = floor(n/ngridCellSize - ngridConstant);
             jgrid = floor(z/zgridCellSize - zgridConstant);
-            pgrid(igrid,1,jgrid) = pgrid(igrid,1,jgrid)+dt;
+            pgrid(ngridind,1,jgrid) = pgrid(ngridind,1,jgrid)+dt;
         
         end
 
