@@ -55,11 +55,11 @@ negrid = 2;
     zgridConstant, pgrid, depgrid, ngridCellSize, egridCellSize,zgridCellSize]... 
     = LS_makeGrid(nmin, nmax, emin, emax, zmin, zmax, nngrid, negrid, nzgrid);
 xgrid = ngrid;
-ygrid = egrid;
-xgridConstant = ngridConstant;
-ygridConstant = egridConstant;
-xgridCellSize = ngridCellSize;
-ygridCellSize = egridCellSize;
+%ygrid = egrid;
+%xgridConstant = ngridConstant;
+%ygridConstant = egridConstant;
+%xgridCellSize = ngridCellSize;
+%ygridCellSize = egridCellSize;
 
 % Get initial velocity fluctuations for every particle
 [up0, wp0] = LS_stablev0(ustar, z_i, h0, np);
@@ -91,14 +91,14 @@ for p = 1:np
             
             % Otherwise if it leaves the bottom of the domain ("deposits"), increment
             % depgrid. Also mark it as not in domain.          
-            igrid = floor(n/xgridCellSize - xgridConstant);
+            igrid = floor(n/ngridCellSize - ngridConstant);
             depgrid(igrid) = depgrid(igrid) + 1;
             in_domain = 0;
             
         else
         
             % Else, increment pgrid by dt for concentration computation
-            igrid = floor(n/xgridCellSize - xgridConstant);
+            igrid = floor(n/ngridCellSize - ngridConstant);
             jgrid = floor(z/zgridCellSize - zgridConstant);
             pgrid(igrid,1,jgrid) = pgrid(igrid,1,jgrid)+dt;
         
@@ -108,7 +108,7 @@ for p = 1:np
 end % End of particle release loop
 
 % Compute concentration from pgrid
-cgrid = pgrid/(np*xgridCellSize*zgridCellSize);
+cgrid = pgrid/(np*ngridCellSize*zgridCellSize);
 
 end
 
