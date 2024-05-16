@@ -1,6 +1,6 @@
-function [ngrid, egrid, zgrid, ngridConstant, egridConstant,... 
-    zgridConstant, pgrid, depgrid, ngridCellSize, egridCellSize,zgridCellSize]... 
-    = LS_makeGrid(nmin, nmax, emin, emax, zmin, zmax, nngrid, negrid, nzgrid)
+function [egrid, ngrid, zgrid, egridConstant, ngridConstant,... 
+    zgridConstant, pgrid, depgrid, egridCellSize, ngridCellSize,zgridCellSize]... 
+    = LS_makeGrid(emin, emax, nmin, nmax, zmin, zmax, negrid, nngrid, nzgrid)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % LS_MAKEGRID Creates grids for particle residence times and deposition.
@@ -55,7 +55,7 @@ ngridConstant = ngrid(1)/ngridCellSize-1;
 egridConstant = egrid(1)/egridCellSize-1;
 zgridConstant = zgrid(1)/zgridCellSize-1;
 
-pgrid = zeros(length(ngrid),length(egrid),length(zgrid));
+pgrid = zeros(length(egrid),length(ngrid),length(zgrid));
 depgrid = pgrid(:,1);
 
 end

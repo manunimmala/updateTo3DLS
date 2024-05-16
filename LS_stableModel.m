@@ -44,22 +44,22 @@ function [xgrid, zgrid, cgrid, depgrid] = LS_stableModel(ustar, wstar, L, ...
 % times, and concentration
 
 
-nmin = xmin;
-nmax = xmax;
-emin = 0;
-emax = 1;
-nngrid = nxgrid;
-negrid = 2;
+emin = xmin;
+emax = xmax;
+nmin = 0;
+nmax = 1;
+negrid = nxgrid;
+nngrid = 2;
 
-[ngrid, egrid, zgrid, ngridConstant, egridConstant,... 
-    zgridConstant, pgrid, depgrid, ngridCellSize, egridCellSize,zgridCellSize]... 
-    = LS_makeGrid(nmin, nmax, emin, emax, zmin, zmax, nngrid, negrid, nzgrid);
-xgrid = ngrid;
-%ygrid = egrid;
-%xgridConstant = ngridConstant;
-%ygridConstant = egridConstant;
-%xgridCellSize = ngridCellSize;
-%ygridCellSize = egridCellSize;
+[egrid, ngrid, zgrid, egridConstant, ngridConstant,... 
+    zgridConstant, pgrid, depgrid, egridCellSize, ngridCellSize,zgridCellSize]... 
+    = LS_makeGrid(emin, emax, nmin, nmax, zmin, zmax, negrid, nngrid, nzgrid);
+xgrid = egrid;
+ygrid = ngrid;
+%xgridConstant = egridConstant;
+%ygridConstant = ngridConstant;
+%xgridCellSize = egridCellSize;
+%ygridCellSize = ngridCellSize;
 
 % Get initial velocity fluctuations for every particle
 [up0, wp0] = LS_stablev0(ustar, z_i, h0, np);
@@ -69,7 +69,7 @@ for p = 1:np
 
     % Initialize particle position and velocity
     in_domain = 1;
-    n = x0;
+    e = x0;
     z = h0;
     t = 0;
     up = up0(p);
@@ -79,10 +79,10 @@ for p = 1:np
     while in_domain
 
         % Increment the position of the particle
-        [n, z, t, dt, up, wp] = LS_stableStep(ustar, L, z_i, z0, C0, vs, n, z, t, up, wp);
+        [e, z, t, dt, up, wp] = LS_stableStep(ustar, L, z_i, z0, C0, vs, e, z, t, up, wp);
         
         % If particle leaves domain, mark it as not in domain.
-        if n < xmin || n > xmax || z > zmax
+        if e < xmin || e > xmax || z > zmax
             
             % If it leaves the top or sides of domain:
             in_domain = 0;
@@ -91,16 +91,16 @@ for p = 1:np
             
             % Otherwise if it leaves the bottom of the domain ("deposits"), increment
             % depgrid. Also mark it as not in domain.          
-            ngridind = floor(n/ngridCellSize - ngridConstant);
-            depgrid(ngridind) = depgrid(ngridind) + 1;
+            e_ind = floor(e/egridCellSize - egridConstant);
+            depgrid(e_ind) = depgrid(e_ind) + 1;
             in_domain = 0;
             
         else
         
             % Else, increment pgrid by dt for concentration computation
-            ngridind = floor(n/ngridCellSize - ngridConstant);
+            e_ind = floor(e/egridCellSize - egridConstant);
             jgrid = floor(z/zgridCellSize - zgridConstant);
-            pgrid(ngridind,1,jgrid) = pgrid(ngridind,1,jgrid)+dt;
+            pgrid(e_ind,1,jgrid) = pgrid(e_ind,1,jgrid)+dt;
         
         end
 
@@ -108,7 +108,7 @@ for p = 1:np
 end % End of particle release loop
 
 % Compute concentration from pgrid
-cgrid = pgrid/(np*ngridCellSize*zgridCellSize);
+cgrid = pgrid/(np*egridCellSize*zgridCellSize);
 
 end
 
