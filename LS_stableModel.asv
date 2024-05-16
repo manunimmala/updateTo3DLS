@@ -45,7 +45,12 @@ function [xgrid, zgrid, cgrid, depgrid] = LS_stableModel(ustar, wstar, L, ...
 
 
 nmin = xmin;
-ymin = 
+nmax = xmax;
+emin = 0;
+emax = 1;
+nngrid = nxgrid;
+negrid = 2;
+
 [ngrid, egrid, zgrid, ngridConstant, egridConstant,... 
     zgridConstant, pgrid, depgrid, ngridCellSize, egridCellSize,zgridCellSize]... 
     = LS_makeGrid(nmin, nmax, emin, emax, zmin, zmax, nngrid, negrid, nzgrid);
@@ -95,7 +100,7 @@ for p = 1:np
             % Else, increment pgrid by dt for concentration computation
             igrid = floor(x/xgridCellSize - xgridConstant);
             jgrid = floor(z/zgridCellSize - zgridConstant);
-            pgrid(igrid,jgrid) = pgrid(igrid,jgrid)+dt;
+            pgrid(igrid,1,jgrid) = pgrid(igrid,1,jgrid)+dt;
         
         end
 

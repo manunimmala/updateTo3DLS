@@ -69,7 +69,7 @@ for p = 1:np
 
     % Initialize particle position and velocity
     in_domain = 1;
-    x = x0;
+    n = x0;
     z = h0;
     t = 0;
     up = up0(p);
@@ -79,10 +79,10 @@ for p = 1:np
     while in_domain
 
         % Increment the position of the particle
-        [x, z, t, dt, up, wp] = LS_stableStep(ustar, L, z_i, z0, C0, vs, x, z, t, up, wp);
+        [n, z, t, dt, up, wp] = LS_stableStep(ustar, L, z_i, z0, C0, vs, n, z, t, up, wp);
         
         % If particle leaves domain, mark it as not in domain.
-        if x < xmin || x > xmax || z > zmax
+        if n < xmin || n > xmax || z > zmax
             
             % If it leaves the top or sides of domain:
             in_domain = 0;
@@ -91,14 +91,14 @@ for p = 1:np
             
             % Otherwise if it leaves the bottom of the domain ("deposits"), increment
             % depgrid. Also mark it as not in domain.          
-            igrid = floor(x/xgridCellSize - xgridConstant);
+            igrid = floor(n/xgridCellSize - xgridConstant);
             depgrid(igrid) = depgrid(igrid) + 1;
             in_domain = 0;
             
         else
         
             % Else, increment pgrid by dt for concentration computation
-            igrid = floor(x/xgridCellSize - xgridConstant);
+            igrid = floor(n/xgridCellSize - xgridConstant);
             jgrid = floor(z/zgridCellSize - zgridConstant);
             pgrid(igrid,1,jgrid) = pgrid(igrid,1,jgrid)+dt;
         
